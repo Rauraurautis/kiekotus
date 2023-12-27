@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "acme",
     "name": "kiekotus-mobile-frontend",
     "slug": "kiekotus-mobile-frontend",
     "version": "1.0.0",
@@ -24,7 +25,13 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "web": {
+        "bundler": "metro"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
