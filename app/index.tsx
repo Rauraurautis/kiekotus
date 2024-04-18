@@ -2,32 +2,34 @@ import { StatusBar } from 'expo-status-bar';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { images } from '../constants';
 import { useEffect, useState } from 'react';
-import LoginForm from '../components/user/LoginForm';
 import { useRouter } from 'expo-router';
-import { getCsrfToken } from '../services/userService';
 import { useAuthStore } from '../store/authStore';
-import * as SecureStore from "expo-secure-store"
-import * as Location from "expo-location"
-import { Coordinates } from '../lib/types';
 import { useAppStateStore } from '../store/appStateStore';
-import { create } from 'zustand';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   const router = useRouter()
-  const { setCsrfToken, loggedIn } = useAuthStore()
+  const { setCsrfToken, loggedIn, logout } = useAuthStore()
   const { creatingRound, setCreatingRound } = useAppStateStore()
   const [loginVisible, setLoginVisible] = useState(false)
 
 
-  useEffect(() => {
-   
-  }, [])
-
   const createRoundHandler = () => {
+    if (!loggedIn) {
+      Toast.show({
+        type: "error",
+        text1: "You need to be logged in to start a round!",
+      })
+      console.log("Log in to start a round!")
+      return
+    }
     router.push({ pathname: "/map" })
     setCreatingRound(true)
   }
 
+  const logOut = () => {
+    logout()
+  }
 
   return (
     <View style={styles.container}>
@@ -44,10 +46,10 @@ export default function App() {
       <View style={styles.lowerButtonContainer} >
         {loggedIn ?
           <>
-            <TouchableOpacity style={styles.rectangleButton} onPress={() => router.push({ pathname: "/login" })}>
+            <TouchableOpacity style={styles.rectangleButton} onPress={() => router.push({ pathname: "/profile" })}>
               <Text style={styles.textStyle}>Profiili</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.rectangleButton} onPress={() => router.push({ pathname: "/login" })}>
+            <TouchableOpacity style={styles.rectangleButton} onPress={logOut}>
               <Text style={styles.textStyle}>Kirjaudu ulos</Text>
             </TouchableOpacity>
           </>

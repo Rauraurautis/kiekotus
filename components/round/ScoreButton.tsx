@@ -19,7 +19,7 @@ export const ScoreButton: FC<ScoreButtonProps> = ({ text, score, playerIndex, ha
 
     if (score === undefined && customScoreStyle) {
         return (
-            <TouchableOpacity onPress={() => handleScorePress(playerIndex)}>
+            <TouchableOpacity onPress={() => handleScorePress(playerIndex)} style={styles.buttonStyle}>
                 {customScoreStyle === "plus" ?
                     <TextInput keyboardType="numeric" onEndEditing={() => handleEndEditting(playerIndex, parseInt(scoreContent))} style={styles.text} placeholder={text} onChangeText={(e) => setScoreContent(e)} onPressIn={() => setScoreContent("+")} >{scoreContent}</TextInput> :
                     <TextInput keyboardType="numeric" onEndEditing={() => handleEndEditting(playerIndex, parseInt(scoreContent))} style={styles.text} placeholder={text} onPressIn={() => setScoreContent("-")}>{scoreContent}</TextInput>}
@@ -28,7 +28,7 @@ export const ScoreButton: FC<ScoreButtonProps> = ({ text, score, playerIndex, ha
     }
 
     return (
-        <TouchableOpacity onPress={() => handleScorePress(playerIndex, score)}>
+        <TouchableOpacity onPress={() => handleScorePress(playerIndex, score)} style={styles.buttonStyle}>
             <Text style={styles.text}>{text}</Text>
         </TouchableOpacity>
     )
@@ -37,5 +37,13 @@ export const ScoreButton: FC<ScoreButtonProps> = ({ text, score, playerIndex, ha
 const styles = StyleSheet.create({
     text: {
         fontSize: 30
+    },
+    buttonStyle: {
+        backgroundColor: "#61BCFA",
+        borderRadius: 50,
+        width: 50,
+        flexDirection: "row",
+        justifyContent: "center",
+        margin: 5
     }
 })

@@ -6,6 +6,7 @@ type RoundStore = {
     creatingRound: boolean
     roundInfo: RoundInfo | null
     setRoundInfo: (roundInfo: RoundInfo) => void
+    
 
 }
 

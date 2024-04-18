@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { Course } from '../../lib/types'
 import { AntDesign } from '@expo/vector-icons';
@@ -6,29 +6,39 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAppStateStore } from '../../store/appStateStore';
 import { useRouter } from 'expo-router';
 import { useRoundStore } from '../../store/roundStore';
+import { getCourseData } from '../../services/courseService';
 
 interface CourseInfoProps {
-    course: null | Course
-    setCourseInfo: React.Dispatch<React.SetStateAction<Course | null>>
+    visibleCourseId: null | number
+    setVisibleCourseId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-const CourseInfo: FC<CourseInfoProps> = ({ course, setCourseInfo }) => {
+const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }) => {
     const { creatingRound } = useAppStateStore()
     const { setRoundInfo } = useRoundStore()
+    const [course, setCourse] = useState<Course | null>(null)
     const router = useRouter()
 
-    if (!course) {
+    useEffect(() => {
+
+        if (visibleCourseId) {
+            getCourseData(visibleCourseId).then(course => setCourse(course))
+        }
+    }, [visibleCourseId])
+
+    /* const handlePlayerSelectionPress = () => {
+         setRoundInfo({ course, players: [] })
+         router.push({ pathname: "/playerselection" })
+     } */
+
+    if (!visibleCourseId || !course) {
         return null
     }
 
-    const handlePlayerSelectionPress = () => {
-        setRoundInfo({ course, players: [] })
-        router.push({ pathname: "/playerselection" })
-    }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => setCourseInfo(null)}>
+            <TouchableOpacity style={styles.backButton} onPress={() => setVisibleCourseId(null)}>
                 <AntDesign name="back" size={24} color="black" />
             </TouchableOpacity>
             <View style={styles.courseInfoContainer}>
@@ -57,7 +67,7 @@ const CourseInfo: FC<CourseInfoProps> = ({ course, setCourseInfo }) => {
                 </ScrollView>
 
                 {creatingRound &&
-                    <TouchableOpacity style={styles.playerChooseButton} onPress={() => handlePlayerSelectionPress()}>
+                    <TouchableOpacity style={styles.playerChooseButton} >
                         <Text>Pelaajavalinta</Text>
                     </TouchableOpacity>}
             </View>

@@ -38,8 +38,6 @@ const LoginForm = ({ }) => {
         }
     })
 
-
-
     const onSubmit = useCallback(async (formData: FieldValues) => {
         loginMutation.mutate({ password: formData.password, email: formData.email, csrfToken })
     }, []);

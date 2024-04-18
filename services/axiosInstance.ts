@@ -18,11 +18,11 @@ const instance = axios.create({ baseURL: "http://192.168.1.66:1337", withCredent
 export const getToken = async () => {
     const token = await SecureStore.getItemAsync("accessToken")
     if (typeof token === "string") { return token }
-    return ""
+    return null
 }
 
 export const setAccessToken = async (token: string) => {
-    localStorage.setItem("access-token", token)
+    await SecureStore.setItemAsync("accessToken", token)
 }
 
 const isTokenExpired = async () => {
@@ -34,14 +34,14 @@ const isTokenExpired = async () => {
         } catch (err) {
             console.error(err)
         }
-
-
+    } else {
+        return token
     }
 }
 
 const getRefreshedToken = async () => {
     try {
-        const result = await axios.get("http://localhost:1337/refresh", { withCredentials: true })
+        const result = await axios.get("http://192.168.1.66:1337/refresh", { withCredentials: true })
         return result.data
     } catch (error: any) {
         console.error(error.message)
@@ -51,8 +51,8 @@ const getRefreshedToken = async () => {
 
 const newAccessToken = async () => {
     const data = await getRefreshedToken()
-    if (typeof data.token === "string") {
-        setAccessToken(data.token)
+    if (typeof data.accessToken === "string") {
+        await setAccessToken(data.accessToken)
         return data.token
     }
 
@@ -61,14 +61,15 @@ const newAccessToken = async () => {
 
 instance.interceptors.request.use(async (req) => {
     const expired = await isTokenExpired()
+
     if (expired) {
         const token = await newAccessToken()
         req.headers["Authorization"] = `Bearer ${token}`
         return req
     }
     const accessToken = await getToken()
-    req.headers["Authorization"] = `Bearer ${accessToken}`
-    return req
+    req.headers["Authorization"] = `Bearer ${accessToken}` 
+    return req 
 })
 
 export default instance

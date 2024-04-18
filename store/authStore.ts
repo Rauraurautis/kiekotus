@@ -42,10 +42,10 @@ type UserPayload = {
 
 const useAuthStore = create<AuthStore>(
     (set, get) => ({
-        user: null,
+        user: {email: "kakka@gmail.com", user: "Rarara", id: "223"},
         userToken: "",
         refreshToken: "",
-        loggedIn: false,
+        loggedIn: true,
         csrfToken: "",
 
         login(token: string) {

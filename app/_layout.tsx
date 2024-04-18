@@ -1,7 +1,7 @@
 import { ImageBackground, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Slot } from 'expo-router'
-
+import Toast from 'react-native-toast-message';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { images } from '../constants'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -13,6 +13,7 @@ const _layout = () => {
         <SafeAreaProvider>
             <QueryClientProvider client={queryClient}>
                 <ImageBackground source={images.background} style={styles.background}>
+                    <Toast />
                     <View style={styles.header}></View>
                     <Slot />
                 </ImageBackground>
@@ -30,7 +31,6 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     header: {
-
         backgroundColor: "grey"
     },
 

@@ -30,8 +30,10 @@ export type Friend = {
 type Difficulty = "AAA1" | "AA2" | "A3" | "BB1" | "B2" | "C1" | "D1"
 
 export type Course = {
+    id: number
     title: string
-    latlng: Coordinates
+    latitude: string
+    longitude: string
     difficulty: Difficulty
     address: string
     description: string
@@ -43,7 +45,7 @@ export type Course = {
 
 export type RoundPlayer = {
     player: Friend
-    scores: Number[]
+    scores: number[]
 }
 
 export type RoundInfo = {

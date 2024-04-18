@@ -5,17 +5,20 @@ import { useAppStateStore } from '../../store/appStateStore'
 import { useRoundStore } from '../../store/roundStore'
 import { Friend, RoundPlayer } from '../../lib/types'
 import { useQuery } from '@tanstack/react-query'
+import { styles } from './styles'
 import { useRouter } from 'expo-router'
+import { useAuthStore } from '../../store/authStore'
 
 interface PlayerSelectionProps {
 
 }
 
-const mockPlayers = ["Kalle", "Ande", "Pekka", "Jorma", "Kallfsee", "Anfsede", "Pekfseka", "Joserma"]
+const mockPlayers: Friend[] = [{ name: "Kalle", id: 32234, type: "friend" }, { name: "Pekka", id: 332, type: "friend" }]
 
 const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
-    const { friends, getAllFriends } = useAppStateStore()
-    const { roundInfo, setRoundInfo } = useRoundStore()
+    const { friends, getAllFriends } = useAppStateStore(state => ({ friends: state.friends, getAllFriends: state.getAllFriends }))
+    const { roundInfo, setRoundInfo } = useRoundStore(state => ({ roundInfo: state.roundInfo, setRoundInfo: state.setRoundInfo }))
+    const { user } = useAuthStore(state => ({ user: state.user }))
     const [selectedFriends, setSelectedFriends] = useState<Friend[]>([])
     const [addingFriend, setAddingFriend] = useState(false)
     const router = useRouter()
@@ -33,8 +36,10 @@ const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
     }
 
     const startRoundHandler = () => {
-        const roundPlayers: RoundPlayer[] = selectedFriends.map(friend => ({ player: friend, scores: [] as Number[] }))
-        setRoundInfo({ course: roundInfo!.course, players: roundPlayers })
+        const roundPlayers: RoundPlayer[] = selectedFriends.map(friend => ({ player: friend, scores: [] as number[] }))
+        if (user) {
+            setRoundInfo({ course: roundInfo!.course, players: [...roundPlayers, { player: { id: Number(user.id), name: user.user, type: "friend" }, scores: [] }] })
+        }
         router.push({ pathname: "/round" })
     }
 
@@ -42,7 +47,7 @@ const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
         <View style={styles.container}>
             {addingFriend && <NewNonregisteredFriendForm setAddingFriend={setAddingFriend} />}
             <FlatList
-                data={friends}
+                data={mockPlayers}
                 renderItem={({ item }) =>
                     <TouchableOpacity style={selectedFriends.some(selectedFriend => selectedFriend.id === item.id) ? styles.playerCardSelected : styles.playerCard} onPress={() => setPlayers(item)}>
                         <Text style={styles.text}>{item.name}</Text>
@@ -56,7 +61,7 @@ const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
                     <TouchableOpacity style={styles.button} onPress={() => setAddingFriend(prev => !prev)}>
                         <Text style={styles.text}>Lisää uusi pelaaja</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={selectedFriends.length > 0 ? styles.button : styles.notReadyButton} onPress={() => startRoundHandler()}>
+                    <TouchableOpacity style={selectedFriends.length > 0 ? styles.button : styles.notReadyButton} disabled={selectedFriends.length === 0} onPress={() => startRoundHandler()}>
                         <Text style={styles.text}>Aloita kierros</Text>
                     </TouchableOpacity>
                 </>
@@ -69,60 +74,3 @@ const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
 
 export default PlayerSelection
 
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "white",
-        width: "100%",
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
-        gap: 5,
-
-    },
-    playerList: {
-        width: "90%",
-        marginTop: 50,
-        flex: 1
-    },
-    playerCard: {
-        height: 80,
-        backgroundColor: "#E8E8E8",
-        justifyContent: "center",
-        alignItems: "center",
-        marginVertical: 5
-    },
-    playerCardSelected: {
-        height: 80,
-        backgroundColor: "#C0C0C0",
-        justifyContent: "center",
-        alignItems: "center",
-        marginVertical: 5
-    },
-    text: {
-        fontSize: 20,
-        fontWeight: "600"
-    },
-    buttonContainer: {
-        flex: 0.5,
-        width: "90%",
-        justifyContent: "space-around",
-        alignItems: "center",
-
-    },
-    button: {
-        backgroundColor: "#7198FC",
-        paddingVertical: 20,
-        width: "80%",
-        alignItems: "center",
-        borderRadius: 20
-    },
-    notReadyButton: {
-        backgroundColor: "#C0C0C0",
-        paddingVertical: 20,
-        width: "80%",
-        alignItems: "center",
-        borderRadius: 20
-    }
-})

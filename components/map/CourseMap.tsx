@@ -1,38 +1,37 @@
-import { FC, ReactNode, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 import { View, StyleSheet, Text, Dimensions } from 'react-native'
 import MapView from 'react-native-maps'
 import { Coordinates, Course } from '../../lib/types'
 import { Marker } from 'react-native-maps'
 import { images } from '../../constants'
 import CourseInfo from './CourseInfo'
+import { AntDesign } from '@expo/vector-icons';
+import { getAllCourses } from '../../services/courseService'
 
 interface CourseMapProps {
     children: ReactNode
     coordinates: Coordinates | null
-    setCourseInfo: React.Dispatch<React.SetStateAction<Course | null>>
+    userCoordinates: Coordinates | null
+    setVisibleCourseId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-const markers: Course[] = [
-    {
-        latlng: { latitude: 60.386132, longitude: 24.9754728 },
-        title: "Testirata", description: "Testidescription", difficulty: "AA2", address: "Kissakuja 5", holes: [{distance: 100, par: 3}, {distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},
-            {distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},{distance: 100, par: 3},
-            {distance: 100, par: 3},{distance: 100, par: 3}], mapAddress: "www.test.com"
-    }
-]
 
 
-const CourseMap: FC<CourseMapProps> = ({ children, coordinates, setCourseInfo }) => {
-  
-
+const CourseMap: FC<CourseMapProps> = ({ children, coordinates, userCoordinates, setVisibleCourseId }) => {
+    const [courses, setCourses] = useState<Course[]>([])
+     
+    useEffect(() => {
+        getAllCourses().then(courses => setCourses(courses))
+    }, [])
+    
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} initialRegion={{ latitude: coordinates ? coordinates.latitude : 0, longitude: coordinates ? coordinates.longitude : 0, latitudeDelta: 0.5, longitudeDelta: 0.5 }} onPress={() => setCourseInfo(null)}>
-                {markers.map((marker, i) => (
-                    <Marker coordinate={marker.latlng} title={marker.title} description={marker.description} key={i} image={images.basket} onPress={() => setCourseInfo(marker)} />
+            <MapView style={styles.map} region={{ latitude: coordinates ? coordinates.latitude : 0, longitude: coordinates ? coordinates.longitude : 0, latitudeDelta: 2, longitudeDelta: 2 }} onPress={() => setVisibleCourseId(null)}>
+                {courses.map((course, i) => (
+                    <Marker coordinate={{ latitude: parseFloat(course.latitude), longitude: parseFloat(course.longitude) }} title={course.title} description={course.description} key={i} image={images.basket} onPress={() => setVisibleCourseId(course.id)} />
                 ))}
+                {userCoordinates && <Marker coordinate={userCoordinates}><AntDesign name="user" size={36} color="green" /></Marker>}
             </MapView>
-            
             {children}
         </View>
     )

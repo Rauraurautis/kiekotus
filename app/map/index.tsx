@@ -5,45 +5,60 @@ import { images } from '../../constants'
 import * as Location from "expo-location"
 import { Coordinates, Course } from '../../lib/types'
 import CourseInfo from '../../components/map/CourseInfo'
-
-
+import { useRouter } from 'expo-router'
+import { AntDesign } from '@expo/vector-icons';
 
 
 const Map = ({ }) => {
-  const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+  const [userLocation, setUserLocation] = useState<Coordinates | null>({ latitude: 60.2963679, longitude: 25.0382604 });
+  const [location, setLocation] = useState<Coordinates | null>({ latitude: 60.2963679, longitude: 25.0382604 });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [courseInfo, setCourseInfo] = useState<null | Course>(null)
+  const [visibleCourseId, setVisibleCourseId] = useState<null | number>(null)
+  const router = useRouter()
+
+
+
+  const getUserLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords
+    return { latitude, longitude }
+  }
 
   useEffect(() => {
-
-    (async () => {
-
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
+    getUserLocation().then(coordinates => {
+      if (coordinates) {
+        setUserLocation({ ...coordinates })
       }
+    })
+  }, [])
 
-      let location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords
 
-      setUserLocation(prev => ({ latitude, longitude }))
-    })();
-  }, []);
 
 
   return (
     <View style={styles.container}>
       {userLocation &&
-        <CourseMap coordinates={userLocation} setCourseInfo={setCourseInfo}>
-          <TouchableOpacity style={styles.locateIcon}>
+        <CourseMap coordinates={location} userCoordinates={userLocation} setVisibleCourseId={setVisibleCourseId}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.push("/")}>
+            <AntDesign name="back" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.locateIcon} onPress={async () => {
+            setLocation(userLocation)
+          }}>
             <Image source={images.locateUser} style={styles.locateIconImage} />
           </TouchableOpacity>
-          <CourseInfo course={courseInfo} setCourseInfo={setCourseInfo} />
+
+          <CourseInfo visibleCourseId={visibleCourseId} setVisibleCourseId={setVisibleCourseId} />
 
         </CourseMap>}
 
-        
+
 
     </View>
   )
@@ -54,7 +69,15 @@ export default Map
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%"
+    width: "100%",
+
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    padding: 10,
+    zIndex: 5
   },
 
   locateIcon: {
