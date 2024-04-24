@@ -16,7 +16,7 @@ import { LoginSchemaType, loginSchema } from "../../lib/zod/schema";
 
 const loginMutationFunc = async (credentials: UserCredentials) => {
     try {
-        const token = await loginToServer({ password: credentials.password, email: credentials.email, csrfToken: credentials.csrfToken })
+        const token = await loginToServer({ password: credentials.password, email: credentials.email })
         return token
     } catch (error) {
         console.error(error)
@@ -25,21 +25,20 @@ const loginMutationFunc = async (credentials: UserCredentials) => {
 
 const LoginForm = ({ }) => {
     const router = useRouter()
-    const { csrfToken, setNewToken, login } = useAuthStore()
+    const { login } = useAuthStore()
     const { register, handleSubmit, setValue, formState: { isSubmitting, errors } } = useForm<LoginSchemaType>({ resolver: zodResolver(loginSchema) });
     const loginMutation = useMutation({
         mutationFn: loginMutationFunc,
-        onSuccess: (token) => {
+        onSuccess: async (token) => {
             if (token) {
-                setNewToken(token)
-                login(token)
+                await login(token)
                 router.push({ pathname: "/" })
             }
         }
     })
 
     const onSubmit = useCallback(async (formData: FieldValues) => {
-        loginMutation.mutate({ password: formData.password, email: formData.email, csrfToken })
+        loginMutation.mutate({ password: formData.password, email: formData.email })
     }, []);
 
     const onChangeField = useCallback((name: any) => (text: any) => {
@@ -76,10 +75,6 @@ const LoginForm = ({ }) => {
             </View>
             <Text style={styles.registerLink} onPress={() => router.push({ pathname: "/registration" })}>Puuttuuko tunnus? Rekisteröidy tästä!</Text>
         </>
-
-
-
-
     );
 };
 

@@ -9,18 +9,19 @@ import Toast from 'react-native-toast-message';
 
 export default function App() {
   const router = useRouter()
-  const { setCsrfToken, loggedIn, logout } = useAuthStore()
+  const { loggedIn, logout, relogin } = useAuthStore(state => ({ loggedIn: state.loggedIn, logout: state.logout, relogin: state.relogin }))
   const { creatingRound, setCreatingRound } = useAppStateStore()
-  const [loginVisible, setLoginVisible] = useState(false)
 
+  useEffect(() => {
+    relogin()
+  }, [])
 
   const createRoundHandler = () => {
     if (!loggedIn) {
       Toast.show({
         type: "error",
-        text1: "You need to be logged in to start a round!",
+        text1: "Kirjaudu sisään aloittaaksesi kierroksen!",
       })
-      console.log("Log in to start a round!")
       return
     }
     router.push({ pathname: "/map" })
@@ -33,6 +34,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <StatusBar style='light' backgroundColor='black' />
       <View style={styles.upperButtonContainer}>
         <TouchableOpacity style={styles.circleButton} onPress={() => createRoundHandler()}>
           <Image source={images.basket} resizeMode='contain' style={styles.iconStyle} />

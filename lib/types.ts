@@ -1,15 +1,12 @@
-type RequiresCSRF = {
-    csrfToken: string
-}
 
 export type UserCredentials = {
     email: string
     password: string
-} & RequiresCSRF
+}
 
 export type NonregisteredFriend = {
     name: string
-} & RequiresCSRF
+}
 
 export type Coordinates = {
     latitude: number

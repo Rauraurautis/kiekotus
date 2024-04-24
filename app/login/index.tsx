@@ -18,7 +18,7 @@ const Login: FC<LoginFormProps> = ({ }) => {
                 <AntDesign name="back" size={24} color="black" />
             </TouchableOpacity>
             <View style={styles.header}>
-                <Text style={styles.mainText} >Kirjaudu sisään</Text>
+                <Text style={styles.mainText}>Kirjaudu sisään</Text>
                 <View style={styles.line} />
             </View>
             <LoginForm />

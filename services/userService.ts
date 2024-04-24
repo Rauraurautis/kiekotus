@@ -13,8 +13,7 @@ export const getCsrfToken = async () => {
 
 export const loginToServer = async (credentials: UserCredentials) => {
     try {
-        instance.defaults.headers.post['CSRF-Token'] = credentials.csrfToken
-        const response = await instance.post("/api/sessions", credentials)
+        const response = await instance.post("/api/login", credentials)
         return response.data.accessToken
     } catch (error) {
         console.error(error)
