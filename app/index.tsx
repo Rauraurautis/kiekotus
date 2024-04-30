@@ -6,13 +6,15 @@ import { useRouter } from 'expo-router';
 import { useAuthStore } from '../store/authStore';
 import { useAppStateStore } from '../store/appStateStore';
 import Toast from 'react-native-toast-message';
+import { styles } from './index.styles';
 
-export default function App() {
+export default function IndexPage() {
   const router = useRouter()
-  const { loggedIn, logout, relogin } = useAuthStore(state => ({ loggedIn: state.loggedIn, logout: state.logout, relogin: state.relogin }))
+  const {  loggedIn, logout, relogin } = useAuthStore(state =>
+    ({ loggedIn: state.loggedIn, logout: state.logout, relogin: state.relogin }))
   const { creatingRound, setCreatingRound } = useAppStateStore()
-
   useEffect(() => {
+    setCreatingRound(false)
     relogin()
   }, [])
 
@@ -48,7 +50,8 @@ export default function App() {
       <View style={styles.lowerButtonContainer} >
         {loggedIn ?
           <>
-            <TouchableOpacity style={styles.rectangleButton} onPress={() => router.push({ pathname: "/profile" })}>
+            <TouchableOpacity style={styles.rectangleButton}
+              onPress={() => router.push({ pathname: "/profile" })}>
               <Text style={styles.textStyle}>Profiili</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.rectangleButton} onPress={logOut}>
@@ -56,66 +59,13 @@ export default function App() {
             </TouchableOpacity>
           </>
           : <>
-            <TouchableOpacity style={styles.rectangleButton} onPress={() => router.push({ pathname: "/login" })}>
+            <TouchableOpacity style={styles.rectangleButton}
+              onPress={() => router.push({ pathname: "/login" })}>
               <Text style={styles.textStyle}>Kirjaudu sisään</Text>
             </TouchableOpacity>
           </>}
-
       </View>
     </View>
-
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: "center",
-    paddingTop: 80,
-    paddingBottom: 50,
-  },
-  upperButtonContainer: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    flex: 0.7
-  },
-  lowerButtonContainer: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    flex: 0.3,
-    marginTop: 50
-  },
-
-  circleButton: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#2E4153",
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    borderRadius: 200,
-    width: 200,
-    height: 200,
-    margin: 10
-  },
-  rectangleButton: {
-    alignItems: "center",
-    backgroundColor: "#2E4153",
-    width: 300,
-    paddingVertical: 15,
-    margin: 10
-
-  },
-  iconStyle: {
-    height: 80
-  },
-  textStyle: {
-    color: "white",
-    fontSize: 28,
-    textAlign: "center"
-  }
-});

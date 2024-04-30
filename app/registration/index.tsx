@@ -21,7 +21,6 @@ const Registration: FC<RegistrationProps> = ({ }) => {
                 <View style={styles.line} />
             </View>
             <RegisterForm />
-
         </View>
     )
 }

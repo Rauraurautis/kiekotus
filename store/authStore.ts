@@ -56,6 +56,7 @@ const useAuthStore = create<AuthStore>(
         },
         async logout() {
             await SecureStore.deleteItemAsync("accessToken")
+            console.log("sd")
             set(state => ({
                 ...state, user: null, loggedIn: false
             }))

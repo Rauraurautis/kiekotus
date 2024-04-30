@@ -11,62 +11,47 @@ import { z } from "zod";
 import { UserCredentials } from "../../lib/types";
 import { useMutation } from "@tanstack/react-query";
 import { LoginSchemaType, loginSchema } from "../../lib/zod/schema";
+import Toast from "react-native-toast-message";
 
-
-
-const loginMutationFunc = async (credentials: UserCredentials) => {
-    try {
-        const token = await loginToServer({ password: credentials.password, email: credentials.email })
-        return token
-    } catch (error) {
-        console.error(error)
-    }
-}
 
 const LoginForm = ({ }) => {
     const router = useRouter()
     const { login } = useAuthStore()
-    const { register, handleSubmit, setValue, formState: { isSubmitting, errors } } = useForm<LoginSchemaType>({ resolver: zodResolver(loginSchema) });
-    const loginMutation = useMutation({
-        mutationFn: loginMutationFunc,
-        onSuccess: async (token) => {
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+
+    const onSubmit = async (formData: FieldValues) => {
+        try {
+            const token = await loginToServer({ password: formData.password, email: formData.email })
             if (token) {
-                await login(token)
+                login(token)
                 router.push({ pathname: "/" })
             }
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Virhe kirjautuessa sisään! Väärä käyttäjätunnus ja/tai salasana.",
+            })
         }
-    })
+    }
 
-    const onSubmit = useCallback(async (formData: FieldValues) => {
-        loginMutation.mutate({ password: formData.password, email: formData.email })
-    }, []);
-
-    const onChangeField = useCallback((name: any) => (text: any) => {
+    const onChangeField = (name: any) => (text: any) => {
         setValue(name, text);
-    }, []);
-
-    useEffect(() => {
-        register('email');
-        register('password');
-    }, [register]);
+    };
 
     return (
         <>
             <View style={styles.formContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Sähköposti"
-                    onChangeText={onChangeField('email')}
-                />
-                {errors.email && <Text style={styles.errorText}>Syötä sähköposti muodossa XXX@XXX.XXX</Text>}
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry
-                    placeholder="Salasana"
-                    onChangeText={onChangeField('password')}
-                />
-                {errors.password && <Text style={styles.errorText}>Syötä salasana</Text>}
-                {loginMutation.isError && <Text style={styles.errorText}>Virhe kirjautuessa sisään. Väärä tunnus ja/tai salasana!</Text>}
+                <TextInput style={styles.input} placeholder="Sähköposti" onChangeText={onChangeField('email')}
+                    {...register("email", {
+                        required: "Syötä sähköposti!", pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: 'Sähköpostin tulee olla muotoa XXX@XXX.XXX',
+                        }
+                    })} />
+                {errors.email && <Text style={styles.errorText}>{errors.email.message as string}</Text>}
+                <TextInput style={styles.input} secureTextEntry placeholder="Salasana" onChangeText={onChangeField('password')}
+                    {...register("password", { required: "Syötä salasana!" })} />
+                {errors.password && <Text style={styles.errorText}>{errors.password.message as string}</Text>}
                 <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.button}>
                     <Text style={styles.buttonText}>
                         Kirjaudu sisään

@@ -9,7 +9,7 @@ interface LoginFormProps {
 
 }
 
-const Login: FC<LoginFormProps> = ({ }) => {
+const LoginPage = ({ }) => {
     const router = useRouter()
 
     return (
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Login
+export default LoginPage

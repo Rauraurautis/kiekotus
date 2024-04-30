@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { images } from '../constants'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { styles } from './layout.styles';
 
 const queryClient = new QueryClient()
 
@@ -24,18 +25,3 @@ const _layout = () => {
 
 export default _layout
 
-const styles = StyleSheet.create({
-    safeAreaView: {
-        flex: 1,
-        backgroundColor: "grey"
-    },
-    background: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    header: {
-        backgroundColor: "grey"
-    },
-
-})

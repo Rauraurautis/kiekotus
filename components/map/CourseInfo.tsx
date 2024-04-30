@@ -20,7 +20,6 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
     const router = useRouter()
 
     useEffect(() => {
-
         if (visibleCourseId) {
             getCourseData(visibleCourseId).then(course => setCourse(course))
         }
@@ -35,14 +34,13 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
         return null
     }
 
-
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => setVisibleCourseId(null)}>
                 <AntDesign name="back" size={24} color="black" />
             </TouchableOpacity>
             <View style={styles.courseInfoContainer}>
-                <Text style={styles.courseTitle}>{course.title} {course.difficulty}</Text>
+                <Text style={styles.courseTitle}>{course.name} {course.difficulty}</Text>
                 <Text style={styles.courseInfo}>{course.address}</Text>
 
                 {course.mapAddress ?

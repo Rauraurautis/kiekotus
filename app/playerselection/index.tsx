@@ -9,14 +9,11 @@ import { styles } from './styles'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '../../store/authStore'
 
-interface PlayerSelectionProps {
-
-}
 
 const mockPlayers: Friend[] = [{ name: "Kalle", id: 32234, type: "friend" }, { name: "Pekka", id: 332, type: "friend" }]
 
-const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
-    const { friends, getAllFriends } = useAppStateStore(state => ({ friends: state.friends, getAllFriends: state.getAllFriends }))
+const PlayerSelection = ({ }) => {
+    const {  getAllFriends } = useAppStateStore(state => ({ friends: state.friends, getAllFriends: state.getAllFriends }))
     const { roundInfo, setRoundInfo } = useRoundStore(state => ({ roundInfo: state.roundInfo, setRoundInfo: state.setRoundInfo }))
     const { user } = useAuthStore(state => ({ user: state.user }))
     const [selectedFriends, setSelectedFriends] = useState<Friend[]>([])
@@ -65,7 +62,6 @@ const PlayerSelection: FC<PlayerSelectionProps> = ({ }) => {
                         <Text style={styles.text}>Aloita kierros</Text>
                     </TouchableOpacity>
                 </>
-
             </View>
 
         </View>

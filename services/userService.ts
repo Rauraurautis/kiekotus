@@ -1,4 +1,4 @@
-import { NonregisteredFriend, UserCredentials } from "../lib/types";
+import { NonregisteredFriend, RegisterUserCredentials, UserCredentials } from "../lib/types";
 import { nonRegisteredFriendSchemaType } from "../lib/zod/schema";
 import instance from "./axiosInstance";
 
@@ -15,6 +15,15 @@ export const loginToServer = async (credentials: UserCredentials) => {
     try {
         const response = await instance.post("/api/login", credentials)
         return response.data.accessToken
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const registerToServer = async (credentials: RegisterUserCredentials) => {
+    try {
+        const response = await instance.post("/api/users", credentials)
+        return response.data
     } catch (error) {
         console.error(error)
     }

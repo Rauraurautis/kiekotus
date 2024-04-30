@@ -4,6 +4,11 @@ export type UserCredentials = {
     password: string
 }
 
+export type RegisterUserCredentials = {
+    username: string
+    confirmPassword: string
+} & UserCredentials
+
 export type NonregisteredFriend = {
     name: string
 }
@@ -28,7 +33,7 @@ type Difficulty = "AAA1" | "AA2" | "A3" | "BB1" | "B2" | "C1" | "D1"
 
 export type Course = {
     id: number
-    title: string
+    name: string
     latitude: string
     longitude: string
     difficulty: Difficulty
