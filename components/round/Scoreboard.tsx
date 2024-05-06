@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import { Course, RoundInfo } from '../../lib/types'
+import { Course, CustomCourse, RoundInfo } from '../../lib/types'
 
 interface ScoreboardProps {
     roundInfo: RoundInfo
-    course: Course
+    course: Course | CustomCourse
 }
 
 const Scoreboard: FC<ScoreboardProps> = ({ roundInfo, course }) => {

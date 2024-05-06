@@ -14,7 +14,7 @@ import { getUserFriends } from '../../services/userService'
 
 
 
-const PlayerSelection = ({ }) => {
+const PlayerSelectionPage = () => {
     const { roundInfo, setRoundInfo } = useRoundStore(state => ({ roundInfo: state.roundInfo, setRoundInfo: state.setRoundInfo }))
     const [friends, setFriends] = useState<Friend[]>([])
     const { user } = useAuthStore(state => ({ user: state.user }))
@@ -48,27 +48,27 @@ const PlayerSelection = ({ }) => {
             <FlatList
                 data={friends}
                 renderItem={({ item }) =>
-                    <TouchableOpacity style={selectedFriends.some(selectedFriend => selectedFriend.id === item.id) ? styles.playerCardSelected : styles.playerCard} onPress={() => setPlayers(item)}>
+                    <TouchableOpacity style={selectedFriends.some(selectedFriend => selectedFriend.id === item.id) ? styles.playerCardSelected : styles.playerCard}
+                        onPress={() => setPlayers(item)}>
                         <Text style={styles.text}>{item.name}</Text>
                     </TouchableOpacity>}
                 keyExtractor={item => item.id + ""}
                 style={styles.playerList}
             />
             <View style={styles.buttonContainer}>
-
                 <>
                     <TouchableOpacity style={styles.button} onPress={() => setAddingFriend(prev => !prev)}>
                         <Text style={styles.text}>Lisää uusi pelaaja</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={selectedFriends.length > 0 ? styles.button : styles.notReadyButton} disabled={selectedFriends.length === 0} onPress={() => startRoundHandler()}>
+                    <TouchableOpacity style={selectedFriends.length > 0 ? styles.button : styles.notReadyButton} disabled={selectedFriends.length === 0}
+                        onPress={() => startRoundHandler()}>
                         <Text style={styles.text}>Aloita kierros</Text>
                     </TouchableOpacity>
                 </>
             </View>
-
         </View>
     )
 }
 
-export default PlayerSelection
+export default PlayerSelectionPage
 

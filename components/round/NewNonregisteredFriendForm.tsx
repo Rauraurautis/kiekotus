@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Keyboard } from 'react-native'
 
 import { AntDesign } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { nonRegisteredFriendSchema, nonRegisteredFriendSchemaType } from '../../
 
 import * as SecureStore from "expo-secure-store"
 import BackButton from '../ui/BackButton';
+import Toast from 'react-native-toast-message';
 
 
 interface NewNonregisteredFriendFormProps {
@@ -17,45 +18,29 @@ interface NewNonregisteredFriendFormProps {
 
 
 const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAddingFriend }) => {
-    const { register, handleSubmit, setValue, formState: { isSubmitting, errors } } = useForm<nonRegisteredFriendSchemaType>({ resolver: zodResolver(nonRegisteredFriendSchema) });
+    const [input, setInput] = useState("")
 
-    const addLocalFriend = async (name: string) => {
+    const addLocalFriend = async () => {
+        if (input.length < 2 && input.length > 10) {
+            Toast.show({type: "error", text1: "Nimen minimipituus 2 merkkiä, maksimipituus 10 merkkiä!"})
+        }
         let friends = await SecureStore.getItemAsync("friends")
         if (!friends) {
             friends = "[]"
         }
         const parsedFriends = JSON.parse(friends)
         if (parsedFriends instanceof Array) {
-            parsedFriends.push(name)
+            parsedFriends.push(input)
             SecureStore.setItemAsync("friends", JSON.stringify(parsedFriends))
         }
     }
-
-
-    useEffect(() => {
-        register('name');
-    }, [register]);
-
-    const onSubmit = useCallback(async (formData: FieldValues) => {
-        addLocalFriend(formData.name)
-    }, []);
-
-    const onChangeField = useCallback((name: any) => (text: any) => {
-        setValue(name, text);
-    }, []);
-
 
     return (
         <View style={styles.container}>
             <BackButton onPress={() => setAddingFriend(prev => !prev)} />
             <View style={styles.newPlayerFormContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Kaverin nimi"
-                    onChangeText={onChangeField('name')}
-                />
-                {errors.name && <Text style={styles.errorText}>Kaverin nimi liian lyhyt tai pitkä!</Text>}
-                <TouchableOpacity onPress={handleSubmit(onSubmit)} style={styles.button}>
+                <TextInput style={styles.input} placeholder="Kaverin nimi" value={input} onChangeText={txt => setInput(txt)} maxLength={20} />
+                <TouchableOpacity onPress={addLocalFriend} style={styles.button}>
                     <Text style={styles.buttonText}>
                         Lisää pelaaja
                     </Text>

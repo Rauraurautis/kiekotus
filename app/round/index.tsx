@@ -4,11 +4,7 @@ import { useRoundStore } from '../../store/roundStore'
 import { ScoreButton } from '../../components/round/ScoreButton'
 import Scoreboard from '../../components/round/Scoreboard'
 
-interface RoundProps {
-
-}
-
-const Round: FC<RoundProps> = ({ }) => {
+const RoundPage = ({ }) => {
     const { roundInfo, setRoundInfo } = useRoundStore()
     const [holeNumber, setHoleNumber] = useState(0)
     const [displayedPlayer, setDisplayedPlayer] = useState(0)
@@ -19,7 +15,7 @@ const Round: FC<RoundProps> = ({ }) => {
     }
 
     const { course, players } = roundInfo
-    const { holes, title } = course
+    const { holes, name } = course
 
     const playerScore: number = players[displayedPlayer].scores[holeNumber]
     const par = holes[holeNumber].par
@@ -72,7 +68,7 @@ const Round: FC<RoundProps> = ({ }) => {
             <View style={styles.fairwayInfo}>
                 <Text style={styles.text}>Väylä {holeNumber + 1}</Text>
                 <Text style={styles.text}>Par {par}</Text>
-                <Text style={styles.text}>{holes[holeNumber].distance}m</Text>
+                <Text style={styles.text}>{holes[holeNumber].distance && `${holes[holeNumber].distance}m`}</Text>
             </View>
             <View>
                 <Text style={styles.text}>{players[displayedPlayer].player.name}</Text>
@@ -100,7 +96,7 @@ const Round: FC<RoundProps> = ({ }) => {
     )
 }
 
-export default Round
+export default RoundPage
 
 const styles = StyleSheet.create({
     container: {
