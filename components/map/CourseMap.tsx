@@ -10,13 +10,15 @@ import { AntDesign } from '@expo/vector-icons';
 import { getAllCourses } from '../../services/courseService'
 import { useRouter } from 'expo-router'
 import { useAppStateStore } from '../../store/appStateStore'
+import CustomCourseForm from './CustomCourseForm'
 
 
 const CourseMap = () => {
     const [courses, setCourses] = useState<Course[]>([])
-    const [userLocation, setUserLocation] = useState<Coordinates | null>({ latitude: 60.2963679, longitude: 25.0382604 });
+    const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
     const [location, setLocation] = useState<Coordinates | null>({ latitude: 60.2963679, longitude: 25.0382604 });
     const [visibleCourseId, setVisibleCourseId] = useState<null | number>(null)
+    const [creatingCustom, setCreatingCustom] = useState(false)
     const creatingRound = useAppStateStore(state => state.creatingRound)
 
     const getUserLocation = async () => {
@@ -56,7 +58,8 @@ const CourseMap = () => {
                 </TouchableOpacity>
             }
             {visibleCourseId && <CourseInfo visibleCourseId={visibleCourseId} setVisibleCourseId={setVisibleCourseId} />}
-            {creatingRound && <TouchableOpacity style={styles.createOwnCourseButton}>
+            {creatingCustom && <CustomCourseForm setCreatingCustom={setCreatingCustom} />}
+            {creatingRound && <TouchableOpacity style={styles.createOwnCourseButton} onPress={() => setCreatingCustom(true)}>
                 <Text>Custom rata</Text>
             </TouchableOpacity>}
 

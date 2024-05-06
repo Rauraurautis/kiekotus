@@ -26,7 +26,6 @@ export type Hole = {
 export type Friend = {
     id: number
     name: string
-    type: "nonregistered" | "friend"
 }
 
 type Difficulty = "AAA1" | "AA2" | "A3" | "BB1" | "B2" | "C1" | "D1"

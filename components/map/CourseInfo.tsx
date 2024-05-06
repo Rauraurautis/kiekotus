@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-nati
 import { Course } from '../../lib/types'
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useAppStateStore } from '../../store/appStateStore';
 import { useRouter } from 'expo-router';
 import { useRoundStore } from '../../store/roundStore';
 import { getCourseData } from '../../services/courseService';
@@ -14,8 +13,8 @@ interface CourseInfoProps {
 }
 
 const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }) => {
-    const { creatingRound } = useAppStateStore()
-    const { setRoundInfo } = useRoundStore()
+    const { setRoundInfo, creatingRound } = useRoundStore(state =>
+        ({ setRoundInfo: state.setRoundInfo, creatingRound: state.creatingRound }))
     const [course, setCourse] = useState<Course | null>(null)
     const router = useRouter()
 
@@ -25,13 +24,13 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
         }
     }, [visibleCourseId])
 
-    /* const handlePlayerSelectionPress = () => {
-         setRoundInfo({ course, players: [] })
-         router.push({ pathname: "/playerselection" })
-     } */
-
     if (!visibleCourseId || !course) {
         return null
+    }
+
+    const handlePlayerSelectionPress = () => {
+        setRoundInfo({ course, players: [] })
+        router.push({ pathname: "/playerselection" })
     }
 
     return (
@@ -42,7 +41,6 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
             <View style={styles.courseInfoContainer}>
                 <Text style={styles.courseTitle}>{course.name} {course.difficulty}</Text>
                 <Text style={styles.courseInfo}>{course.address}</Text>
-
                 {course.mapAddress ?
                     <TouchableOpacity style={styles.courseMap}>
                         <MaterialIcons name="map" size={24} color="blue" />
@@ -63,9 +61,9 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
 
                     ))}
                 </ScrollView>
-
                 {creatingRound &&
-                    <TouchableOpacity style={styles.playerChooseButton} >
+                    <TouchableOpacity style={styles.playerChooseButton}
+                        onPress={() => handlePlayerSelectionPress()} >
                         <Text>Pelaajavalinta</Text>
                     </TouchableOpacity>}
             </View>

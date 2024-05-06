@@ -1,37 +1,35 @@
 import { FC, useCallback, useEffect } from 'react'
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Keyboard } from 'react-native'
-import { Course, NonregisteredFriend } from '../../lib/types'
+
 import { AntDesign } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useAppStateStore } from '../../store/appStateStore';
-import { useRouter } from 'expo-router';
-import { useAuthStore } from '../../store/authStore';
+
 import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { nonRegisteredFriendSchema, nonRegisteredFriendSchemaType } from '../../lib/zod/schema';
-import { useMutation } from '@tanstack/react-query';
-import { addNonregisteredFriend } from '../../services/userService';
+
+import * as SecureStore from "expo-secure-store"
+import BackButton from '../ui/BackButton';
 
 
 interface NewNonregisteredFriendFormProps {
     setAddingFriend: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const addNewNonregisteredFriendFunc = async (friend: NonregisteredFriend) => {
-    const nonregisteredFriend = await addNonregisteredFriend(friend)
-    return nonregisteredFriend
-}
 
 const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAddingFriend }) => {
-    const { csrfToken } = useAuthStore()
-    const { setFriends } = useAppStateStore()
     const { register, handleSubmit, setValue, formState: { isSubmitting, errors } } = useForm<nonRegisteredFriendSchemaType>({ resolver: zodResolver(nonRegisteredFriendSchema) });
-    const newNonregisteredFriendMutation = useMutation({
-        mutationFn: addNewNonregisteredFriendFunc,
-        onSuccess: async (data) => {
-            setFriends()
+
+    const addLocalFriend = async (name: string) => {
+        let friends = await SecureStore.getItemAsync("friends")
+        if (!friends) {
+            friends = "[]"
         }
-    })
+        const parsedFriends = JSON.parse(friends)
+        if (parsedFriends instanceof Array) {
+            parsedFriends.push(name)
+            SecureStore.setItemAsync("friends", JSON.stringify(parsedFriends))
+        }
+    }
 
 
     useEffect(() => {
@@ -39,7 +37,7 @@ const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAd
     }, [register]);
 
     const onSubmit = useCallback(async (formData: FieldValues) => {
-        newNonregisteredFriendMutation.mutate({ name: formData.name, csrfToken })
+        addLocalFriend(formData.name)
     }, []);
 
     const onChangeField = useCallback((name: any) => (text: any) => {
@@ -49,9 +47,7 @@ const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAd
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => setAddingFriend(prev => !prev)}>
-                <AntDesign name="back" size={24} color="black" />
-            </TouchableOpacity>
+            <BackButton onPress={() => setAddingFriend(prev => !prev)} />
             <View style={styles.newPlayerFormContainer}>
                 <TextInput
                     style={styles.input}

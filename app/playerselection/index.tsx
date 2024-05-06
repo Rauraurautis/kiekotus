@@ -1,27 +1,29 @@
 import { FC, useEffect, useState } from 'react'
 import { FlatList, SafeAreaView, TextComponent, View, Text, StyleSheet, TouchableOpacity, Keyboard } from 'react-native'
-import NewNonregisteredFriendForm from '../../components/user/NewNonregisteredFriendForm'
+import NewNonregisteredFriendForm from '../../components/round/NewNonregisteredFriendForm'
 import { useAppStateStore } from '../../store/appStateStore'
 import { useRoundStore } from '../../store/roundStore'
 import { Friend, RoundPlayer } from '../../lib/types'
 import { useQuery } from '@tanstack/react-query'
+import * as SecureStore from "expo-secure-store"
 import { styles } from './styles'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '../../store/authStore'
+import { getUserFriends } from '../../services/userService'
 
 
-const mockPlayers: Friend[] = [{ name: "Kalle", id: 32234, type: "friend" }, { name: "Pekka", id: 332, type: "friend" }]
+
 
 const PlayerSelection = ({ }) => {
-    const {  getAllFriends } = useAppStateStore(state => ({ friends: state.friends, getAllFriends: state.getAllFriends }))
     const { roundInfo, setRoundInfo } = useRoundStore(state => ({ roundInfo: state.roundInfo, setRoundInfo: state.setRoundInfo }))
+    const [friends, setFriends] = useState<Friend[]>([])
     const { user } = useAuthStore(state => ({ user: state.user }))
     const [selectedFriends, setSelectedFriends] = useState<Friend[]>([])
     const [addingFriend, setAddingFriend] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
-        getAllFriends()
+        getUserFriends().then(data => setFriends(data))
     }, [])
 
     const setPlayers = (clickedFriend: Friend) => {
@@ -35,7 +37,7 @@ const PlayerSelection = ({ }) => {
     const startRoundHandler = () => {
         const roundPlayers: RoundPlayer[] = selectedFriends.map(friend => ({ player: friend, scores: [] as number[] }))
         if (user) {
-            setRoundInfo({ course: roundInfo!.course, players: [...roundPlayers, { player: { id: Number(user.id), name: user.user, type: "friend" }, scores: [] }] })
+            setRoundInfo({ course: roundInfo!.course, players: [...roundPlayers, { player: { id: Number(user.id), name: user.user }, scores: [] }] })
         }
         router.push({ pathname: "/round" })
     }
@@ -44,7 +46,7 @@ const PlayerSelection = ({ }) => {
         <View style={styles.container}>
             {addingFriend && <NewNonregisteredFriendForm setAddingFriend={setAddingFriend} />}
             <FlatList
-                data={mockPlayers}
+                data={friends}
                 renderItem={({ item }) =>
                     <TouchableOpacity style={selectedFriends.some(selectedFriend => selectedFriend.id === item.id) ? styles.playerCardSelected : styles.playerCard} onPress={() => setPlayers(item)}>
                         <Text style={styles.text}>{item.name}</Text>

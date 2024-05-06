@@ -7,12 +7,12 @@ import { useAuthStore } from '../store/authStore';
 import { useAppStateStore } from '../store/appStateStore';
 import Toast from 'react-native-toast-message';
 import { styles } from './index.styles';
+import { useRoundStore } from '../store/roundStore';
 
 export default function IndexPage() {
   const router = useRouter()
-  const {  loggedIn, logout, relogin } = useAuthStore(state =>
-    ({ loggedIn: state.loggedIn, logout: state.logout, relogin: state.relogin }))
-  const { creatingRound, setCreatingRound } = useAppStateStore()
+  const { loggedIn, logout, relogin } = useAuthStore()
+  const { setCreatingRound } = useRoundStore()
   useEffect(() => {
     setCreatingRound(false)
     relogin()

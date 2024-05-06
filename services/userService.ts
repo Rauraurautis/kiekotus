@@ -1,6 +1,7 @@
 import { NonregisteredFriend, RegisterUserCredentials, UserCredentials } from "../lib/types";
 import { nonRegisteredFriendSchemaType } from "../lib/zod/schema";
 import instance from "./axiosInstance";
+import * as SecureStore from "expo-secure-store"
 
 export const getCsrfToken = async () => {
     try {
@@ -45,10 +46,13 @@ export const addNonregisteredFriend = async (friend: NonregisteredFriend) => {
 export const getUserFriends = async () => {
     try {
         const resFriends = await instance.get("/api/friendships")
-        const resNonregFriends = await instance.get("/api/nonregistered-friends")
         const friends = await resFriends.data
-        const nonregFriends = await resNonregFriends.data
-        return { friends, nonregFriends }
+        const localFriends = await SecureStore.getItemAsync("friends")
+        if (localFriends) {
+            const parsedFriends = JSON.parse(localFriends)
+            return [friends, parsedFriends]
+        }
+        return friends
     } catch (error) {
         console.error(error)
     }
