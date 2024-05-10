@@ -1,28 +1,28 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Keyboard } from 'react-native'
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
-import { AntDesign } from '@expo/vector-icons';
-
-import { FieldValues, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { nonRegisteredFriendSchema, nonRegisteredFriendSchemaType } from '../../lib/zod/schema';
 
 import * as SecureStore from "expo-secure-store"
 import BackButton from '../ui/BackButton';
 import Toast from 'react-native-toast-message';
+import { Friend } from '../../lib/types';
 
 
 interface NewNonregisteredFriendFormProps {
     setAddingFriend: React.Dispatch<React.SetStateAction<boolean>>
+    setFriends: React.Dispatch<React.SetStateAction<Friend[]>>
 }
 
 
-const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAddingFriend }) => {
+const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAddingFriend, setFriends }) => {
     const [input, setInput] = useState("")
 
     const addLocalFriend = async () => {
         if (input.length < 2 && input.length > 10) {
-            Toast.show({type: "error", text1: "Nimen minimipituus 2 merkkiä, maksimipituus 10 merkkiä!"})
+            Toast.show({ type: "error", text1: "Nimen minimipituus 2 merkkiä, maksimipituus 10 merkkiä!" })
+            return
         }
         let friends = await SecureStore.getItemAsync("friends")
         if (!friends) {
@@ -30,8 +30,11 @@ const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAd
         }
         const parsedFriends = JSON.parse(friends)
         if (parsedFriends instanceof Array) {
-            parsedFriends.push(input)
+            const friend = { name: input, id: uuidv4() }
+            parsedFriends.push(friend)
             SecureStore.setItemAsync("friends", JSON.stringify(parsedFriends))
+            setFriends(prev => [...prev, friend])
+            setAddingFriend(prev => !prev)
         }
     }
 
@@ -39,7 +42,8 @@ const NewNonregisteredFriendForm: FC<NewNonregisteredFriendFormProps> = ({ setAd
         <View style={styles.container}>
             <BackButton onPress={() => setAddingFriend(prev => !prev)} />
             <View style={styles.newPlayerFormContainer}>
-                <TextInput style={styles.input} placeholder="Kaverin nimi" value={input} onChangeText={txt => setInput(txt)} maxLength={20} />
+                <TextInput style={styles.input} placeholder="Kaverin nimi" value={input}
+                    onChangeText={txt => setInput(txt)} maxLength={20} />
                 <TouchableOpacity onPress={addLocalFriend} style={styles.button}>
                     <Text style={styles.buttonText}>
                         Lisää pelaaja

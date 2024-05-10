@@ -1,4 +1,10 @@
 
+export type User = {
+    email: string
+    user: string
+    id: string
+}
+
 export type UserCredentials = {
     email: string
     password: string
@@ -24,7 +30,7 @@ export type Hole = {
 }
 
 export type Friend = {
-    id: number
+    id: number | string
     name: string
 }
 

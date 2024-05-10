@@ -4,6 +4,10 @@ import { useAuthStore } from '../../store/authStore'
 import { StatusBar } from 'expo-status-bar'
 import db from '../../lib/sqLite/SQliteSetup'
 import { executeInsertQuery, executeSelectQuery } from '../../lib/sqLite/friends'
+import { useRouter } from 'expo-router'
+import BackButton from '../../components/ui/BackButton'
+import FriendList from '../../components/profile/friends/FriendList'
+import PlayedRounds from '../../components/profile/rounds/PlayedRounds'
 
 
 interface ProfileProps {
@@ -13,12 +17,11 @@ interface ProfileProps {
 
 const Profile: FC<ProfileProps> = ({ }) => {
     const user = useAuthStore(state => state.user)
-    const [friends, setFriends] = useState<{ id: number, name: string }[]>([])
+    const router = useRouter()
+    const [showFriends, setShowFriends] = useState(false)
+    const [showRounds, setShowRounds] = useState(false)
 
     useEffect(() => {
-
-        executeSelectQuery("SELECT * FROM Friend UNION SELECT * FROM Nonregistered_friend").then(data => setFriends(data))
-
 
     }, [])
 
@@ -26,22 +29,20 @@ const Profile: FC<ProfileProps> = ({ }) => {
     return (
         <View style={styles.container}>
             <StatusBar style='light' backgroundColor='black' />
+            {showFriends && <FriendList user={user} setShowFriends={setShowFriends} />}
+            {showRounds && <PlayedRounds user={user} setShowRounds={setShowRounds} />}
+            <BackButton onPress={() => router.push("/")} />
             <View style={styles.userInfoContainer}>
                 <Text>{user?.user}</Text>
                 <Text>{user?.email}</Text>
-                <TouchableOpacity onPress={() => executeInsertQuery("Rauli")}><Text>add</Text></TouchableOpacity>
             </View>
-            {/* friends */}
-            <View style={styles.userFriendsContainer}>
-                <FlatList
-                    data={friends}
-                    renderItem={({ item }) => (
-                        <View>
-                            <Text>{item.name}</Text>
-                        </View>
-                    )} />
+            <TouchableOpacity>
+                <Text>Kaverilista</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                <Text>Pelatut kierrokset</Text>
+            </TouchableOpacity>
 
-            </View>
         </View>
     )
 }

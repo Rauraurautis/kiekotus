@@ -9,7 +9,7 @@ import * as SecureStore from "expo-secure-store"
 import { styles } from './styles'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '../../store/authStore'
-import { getUserFriends } from '../../services/userService'
+import { getAllUserFriends } from '../../services/userService'
 
 
 
@@ -21,9 +21,10 @@ const PlayerSelectionPage = () => {
     const [selectedFriends, setSelectedFriends] = useState<Friend[]>([])
     const [addingFriend, setAddingFriend] = useState(false)
     const router = useRouter()
-
     useEffect(() => {
-        getUserFriends().then(data => setFriends(data))
+        if (user) {
+            getAllUserFriends(user.id).then(data => setFriends(data))
+        }
     }, [])
 
     const setPlayers = (clickedFriend: Friend) => {
@@ -44,7 +45,7 @@ const PlayerSelectionPage = () => {
 
     return (
         <View style={styles.container}>
-            {addingFriend && <NewNonregisteredFriendForm setAddingFriend={setAddingFriend} />}
+            {addingFriend && <NewNonregisteredFriendForm setAddingFriend={setAddingFriend} setFriends={setFriends} />}
             <FlatList
                 data={friends}
                 renderItem={({ item }) =>

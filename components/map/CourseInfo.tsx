@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useRoundStore } from '../../store/roundStore';
 import { getCourseData } from '../../services/courseService';
+import BackButton from '../ui/BackButton';
 
 interface CourseInfoProps {
     visibleCourseId: null | number
@@ -35,9 +36,7 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => setVisibleCourseId(null)}>
-                <AntDesign name="back" size={24} color="black" />
-            </TouchableOpacity>
+            <BackButton onPress={() => setVisibleCourseId(null)} />
             <View style={styles.courseInfoContainer}>
                 <Text style={styles.courseTitle}>{course.name} {course.difficulty}</Text>
                 <Text style={styles.courseInfo}>{course.address}</Text>
@@ -73,8 +72,8 @@ const CourseInfo: FC<CourseInfoProps> = ({ visibleCourseId, setVisibleCourseId }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.3,
-        minHeight: 230,
+        flex: 0.4,
+        minHeight: 250,
         justifyContent: 'flex-start',
         alignItems: 'center',
         padding: 30,
@@ -82,12 +81,6 @@ const styles = StyleSheet.create({
         width: 280,
         position: "relative",
         zIndex: 20
-    },
-    backButton: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        padding: 10
     },
     courseInfoContainer: {
         display: "flex",

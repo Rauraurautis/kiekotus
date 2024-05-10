@@ -43,17 +43,43 @@ export const addNonregisteredFriend = async (friend: NonregisteredFriend) => {
     }
 }
 
-export const getUserFriends = async () => {
+export const getUserFriends = async (userId: string) => {
     try {
-        const resFriends = await instance.get("/api/friendships")
+        const resFriends = await instance.get(`/api/users/${userId}/friendships`)
+        const friends = await resFriends.data
+        return friends
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const getUserRounds = async (userId: string) => {
+    try {
+        const response = await instance.get(`/api/users/${userId}/rounds`)
+        const data = await response.data
+        return data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const getAllUserFriends = async (userId: string) => {
+    try {
+        const resFriends = await instance.get(`/api/users/${userId}/friendships`)
         const friends = await resFriends.data
         const localFriends = await SecureStore.getItemAsync("friends")
         if (localFriends) {
             const parsedFriends = JSON.parse(localFriends)
-            return [friends, parsedFriends]
+            console.log([...friends, ...parsedFriends])
+            return [...friends, ...parsedFriends]
         }
         return friends
     } catch (error) {
         console.error(error)
+        const localFriends = await SecureStore.getItemAsync("friends")
+        if (localFriends) {
+            const parsedFriends = JSON.parse(localFriends)
+            return parsedFriends
+        }
     }
 }

@@ -3,6 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useRoundStore } from '../../store/roundStore'
 import { ScoreButton } from '../../components/round/ScoreButton'
 import Scoreboard from '../../components/round/Scoreboard'
+import FairwayInfo from '../../components/round/FairwayInfo'
+import PlayerInfo from '../../components/round/PlayerInfo'
+import ScoreButtons from '../../components/round/ScoreButtons'
 
 const RoundPage = ({ }) => {
     const { roundInfo, setRoundInfo } = useRoundStore()
@@ -15,80 +18,21 @@ const RoundPage = ({ }) => {
     }
 
     const { course, players } = roundInfo
-    const { holes, name } = course
+    const { holes } = course
 
     const playerScore: number = players[displayedPlayer].scores[holeNumber]
     const par = holes[holeNumber].par
 
-    const handleScorePress = (playerIndex: number, score?: number) => {
-        if (score === undefined) {
-            return
-        }
-
-        setRoundInfo({
-            ...roundInfo, players: roundInfo.players.map((player, i) => {
-                if (i !== playerIndex) return { ...player }
-                player.scores.splice(holeNumber, 1, score + par)
-                return ({ ...player })
-            })
-        })
-        if (displayedPlayer + 1 === players.length) {
-            if (holeNumber + 1 === holes.length) {
-                // Display scoreboard
-                return
-            }
-            setHoleNumber(prev => prev + 1)
-            setDisplayedPlayer(0)
-        } else {
-            setDisplayedPlayer(prev => prev + 1)
-        }
-    }
-
-    const handleBackPress = () => {
-        if (displayedPlayer === 0) {
-            setHoleNumber(prev => prev - 1)
-            setDisplayedPlayer(players.length - 1)
-            return
-        }
-        setDisplayedPlayer(prev => prev - 1)
-    }
-
-    const handleNextPress = () => {
-        if (displayedPlayer === players.length - 1) {
-            setHoleNumber(prev => prev + 1)
-            setDisplayedPlayer(0)
-            return
-        }
-        setDisplayedPlayer(prev => prev + 1)
-    }
-
     return (
         <View style={styles.container}>
             {displayScoreboard && <Scoreboard roundInfo={roundInfo} course={course} />}
-            <View style={styles.fairwayInfo}>
-                <Text style={styles.text}>Väylä {holeNumber + 1}</Text>
-                <Text style={styles.text}>Par {par}</Text>
-                <Text style={styles.text}>{holes[holeNumber].distance && `${holes[holeNumber].distance}m`}</Text>
-            </View>
-            <View>
-                <Text style={styles.text}>{players[displayedPlayer].player.name}</Text>
-                <Text style={styles.text}>{playerScore > par && "+"}{playerScore && (playerScore - par) + ""}</Text>
-                {(holeNumber > 0 || displayedPlayer > 0) &&
-                    <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-                        <Text>Takaisin</Text>
-                    </TouchableOpacity>}
-                {(holeNumber !== holes.length && displayedPlayer !== players.length) &&
-                    <TouchableOpacity style={styles.backButton} onPress={handleNextPress}>
-                        <Text>Seuraava</Text>
-                    </TouchableOpacity>}
-            </View>
-            <View style={styles.scoreContainer}>
-                <ScoreButton handleScorePress={handleScorePress} playerIndex={displayedPlayer} text='-...' customScoreStyle='minus' />
-                <ScoreButton handleScorePress={handleScorePress} score={-1} playerIndex={displayedPlayer} text='-1' />
-                <ScoreButton handleScorePress={handleScorePress} score={0} playerIndex={displayedPlayer} text='0' />
-                <ScoreButton handleScorePress={handleScorePress} score={1} playerIndex={displayedPlayer} text='+1' />
-                <ScoreButton handleScorePress={handleScorePress} playerIndex={displayedPlayer} text='+...' customScoreStyle='plus' />
-            </View>
+            <FairwayInfo distance={holes[holeNumber].distance} holeNumber={holeNumber} par={par} />
+            <PlayerInfo player={players[displayedPlayer].player.name} playerScore={playerScore} par={par}
+                displayedPlayer={displayedPlayer} holeNumber={holeNumber} holes={holes} players={players}
+                setDisplayedPlayer={setDisplayedPlayer} setHoleNumber={setHoleNumber} />
+            <ScoreButtons displayedPlayer={displayedPlayer} holeNumber={holeNumber} holes={holes} par={par}
+                players={players} roundInfo={roundInfo} setDisplayScoreboard={setDisplayScoreboard}
+                 setDisplayedPlayer={setDisplayedPlayer} setHoleNumber={setHoleNumber} setRoundInfo={setRoundInfo} />
             <TouchableOpacity onPress={() => setDisplayScoreboard(prev => !prev)}>
                 <Text>Tulokset</Text>
             </TouchableOpacity>

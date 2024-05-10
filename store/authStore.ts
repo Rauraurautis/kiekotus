@@ -1,14 +1,7 @@
 import jwtDecode from "jwt-decode"
 import { create } from "zustand"
 import * as SecureStore from "expo-secure-store"
-
-type User = {
-    email: string
-    user: string
-    id: string
-}
-
-
+import { User } from "../lib/types"
 
 type AuthStore = {
     user: User | null

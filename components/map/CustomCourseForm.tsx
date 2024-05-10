@@ -13,7 +13,7 @@ interface CustomCourseFormProps {
 }
 
 const CustomCourseForm: FC<CustomCourseFormProps> = ({ setCreatingCustom }) => {
-    const { setRoundInfo, creatingRound } = useRoundStore(state =>
+    const { setRoundInfo } = useRoundStore(state =>
         ({ setRoundInfo: state.setRoundInfo, creatingRound: state.creatingRound }))
     const [fairways, setFairways] = useState<number[]>([])
     const [input, setInput] = useState("")
@@ -36,11 +36,17 @@ const CustomCourseForm: FC<CustomCourseFormProps> = ({ setCreatingCustom }) => {
 
     return (
         <View style={styles.container}>
+            <Toast />
             <BackButton onPress={() => setCreatingCustom(false)} />
             <View style={styles.newCourseContainer}>
-                <FlatList data={fairways} renderItem={({ item }) => <View>{item}</View>} />
-                <TextInput value={input} onChangeText={(txt) => setInput(txt)} />
-                <TouchableOpacity onPress={addFairway}>
+                <FlatList data={fairways} renderItem={({ item, index }) =>
+                    <View><Text style={styles.fairwayText}>Väylä {index + 1}: Par {item}</Text></View>} />
+                <View style={styles.inputContainer}>
+                    <Text style={styles.inputText}>Väylä {fairways.length + 1}: Par </Text>
+                    <TextInput value={input} style={styles.inputText} onChangeText={(txt) => setInput(txt)}
+                        keyboardType='numeric' autoFocus />
+                </View>
+                <TouchableOpacity onPress={addFairway} style={styles.addFairwayButton}>
                     <Text>Lisää väylä</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.playerChooseButton}
@@ -55,7 +61,7 @@ const CustomCourseForm: FC<CustomCourseFormProps> = ({ setCreatingCustom }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0.3,
+        flex: 0.5,
         minHeight: 230,
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -63,13 +69,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         width: 280,
         position: "relative",
-        zIndex: 20
-    },
-    backButton: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        padding: 10
+        zIndex: 0
     },
     newCourseContainer: {
         display: "flex",
@@ -77,46 +77,29 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 5
     },
-    courseTitle: {
-        fontSize: 25,
-        top: 0
+    fairwayText: {
+        fontSize: 15,
+        fontWeight: "bold"
     },
-    courseInfo: {
-
-    },
-    courseMap: {
+    inputContainer: {
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
-        gap: 3,
-        fontWeight: "200",
-
+        alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center"
     },
-    fairwayHeader: {
-        fontSize: 20,
-        marginTop: 5
-    },
-    fairwayList: {
-        width: "auto",
-        gap: 5,
-        paddingHorizontal: 5
-    },
-    fairwayInfo: {
-        display: "flex",
-        flexDirection: "row",
-        gap: 5,
-        justifyContent: "space-between",
-        width: "90%"
-    },
-    fairwayNumber: {
-        fontWeight: "600"
-    },
-    distanceAndPar: {
-        flexDirection: "row",
-        gap: 5
+    inputText: {
+        fontSize: 20
     },
     playerChooseButton: {
         backgroundColor: "#7198FC",
+        marginTop: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 50
+    },
+    addFairwayButton: {
+        backgroundColor: "#4db8ff",
         marginTop: 10,
         paddingVertical: 10,
         paddingHorizontal: 20,

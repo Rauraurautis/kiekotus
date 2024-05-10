@@ -11,6 +11,8 @@ import { getAllCourses } from '../../services/courseService'
 import { useRouter } from 'expo-router'
 import { useAppStateStore } from '../../store/appStateStore'
 import CustomCourseForm from './CustomCourseForm'
+import { useRoundStore } from '../../store/roundStore'
+import Toast from 'react-native-toast-message'
 
 
 const CourseMap = () => {
@@ -19,8 +21,9 @@ const CourseMap = () => {
     const [location, setLocation] = useState<Coordinates | null>({ latitude: 60.2963679, longitude: 25.0382604 });
     const [visibleCourseId, setVisibleCourseId] = useState<null | number>(null)
     const [creatingCustom, setCreatingCustom] = useState(false)
-    const creatingRound = useAppStateStore(state => state.creatingRound)
+    const creatingRound = useRoundStore(state => state.creatingRound)
 
+    // Käyttäjän sijainnin pyyntäminen ja hyödyntäminen
     const getUserLocation = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -52,6 +55,7 @@ const CourseMap = () => {
                         description={course.description} key={i} image={images.basket} onPress={() => setVisibleCourseId(course.id)} />
                 ))}
             </MapView>
+            <Toast  />
             {userLocation &&
                 <TouchableOpacity style={styles.locateIcon} onPress={async () => { setLocation(userLocation) }}>
                     <Image source={images.locateUser} style={styles.locateIconImage} />
@@ -59,11 +63,9 @@ const CourseMap = () => {
             }
             {visibleCourseId && <CourseInfo visibleCourseId={visibleCourseId} setVisibleCourseId={setVisibleCourseId} />}
             {creatingCustom && <CustomCourseForm setCreatingCustom={setCreatingCustom} />}
-            {creatingRound && <TouchableOpacity style={styles.createOwnCourseButton} onPress={() => setCreatingCustom(true)}>
+            {creatingRound && !creatingCustom && <TouchableOpacity style={styles.createOwnCourseButton} onPress={() => setCreatingCustom(true)}>
                 <Text>Custom rata</Text>
             </TouchableOpacity>}
-
-
         </View>
     )
 }
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: 'center',
-        flex: 1
+        flex: 1,
     },
     backButton: {
         position: 'absolute',
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
     createOwnCourseButton: {
         position: 'absolute',
         backgroundColor: "#0099ff",
+        fontWeight: "bold",
         borderRadius: 200,
         height: 60,
         bottom: 15,

@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 0,
         left: 0,
-        padding: 10
+        padding: 5
     }
 })
 

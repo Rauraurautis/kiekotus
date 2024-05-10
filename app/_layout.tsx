@@ -15,7 +15,7 @@ const _layout = () => {
         <SafeAreaView style={styles.safeAreaView}>
             <QueryClientProvider client={queryClient}>
                 <ImageBackground source={images.background} style={styles.background}>
-                    <Toast />
+                    <Toast  />
                     <Slot />
                 </ImageBackground>
             </QueryClientProvider>
