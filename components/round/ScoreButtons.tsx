@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useRoundStore } from '../../store/roundStore'
 import { ScoreButton } from '../../components/round/ScoreButton'
 import Scoreboard from '../../components/round/Scoreboard'
-import FairwayInfo from '../../components/round/FairwayInfo'
+import FairwayInfo from './HoleInfo'
 import PlayerInfo from '../../components/round/PlayerInfo'
 import { Hole, RoundInfo, RoundPlayer } from '../../lib/types'
 
@@ -14,6 +14,7 @@ interface ScoreButtonsProps {
     players: RoundPlayer[]
     holes: Hole[]
     par: number
+    lastScore: boolean
     setRoundInfo: (roundInfo: RoundInfo) => void
     setDisplayScoreboard: React.Dispatch<React.SetStateAction<boolean>>
     setHoleNumber: React.Dispatch<React.SetStateAction<number>>
@@ -21,7 +22,7 @@ interface ScoreButtonsProps {
 }
 
 const ScoreButtons: FC<ScoreButtonsProps> = ({ displayedPlayer, roundInfo, holeNumber, players, holes,
-    setRoundInfo, setDisplayScoreboard, setDisplayedPlayer, setHoleNumber, par }) => {
+    setRoundInfo, setDisplayedPlayer, setHoleNumber }) => {
 
     if (!roundInfo) {
         return null
@@ -29,18 +30,18 @@ const ScoreButtons: FC<ScoreButtonsProps> = ({ displayedPlayer, roundInfo, holeN
 
     const handleScorePress = (playerIndex: number, score?: number) => {
         if (score === undefined) {
+            console.log(score)
             return
         }
         setRoundInfo({
             ...roundInfo, players: roundInfo.players.map((player, i) => {
                 if (i !== playerIndex) return { ...player }
-                player.scores.splice(holeNumber, 1, score + par)
+                player.scores.splice(holeNumber, 1, score)
                 return ({ ...player })
             })
         })
         if (displayedPlayer + 1 === players.length) {
             if (holeNumber + 1 === holes.length) {
-                setDisplayScoreboard(true)
                 return
             }
             setHoleNumber(prev => prev + 1)
@@ -64,32 +65,30 @@ const ScoreButtons: FC<ScoreButtonsProps> = ({ displayedPlayer, roundInfo, holeN
 export default ScoreButtons
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "white",
-        width: "100%",
-        flex: 1,
-        justifyContent: "space-around",
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
-        gap: 5,
-    },
-    fairwayInfo: {
-        alignItems: "center",
-        gap: 5
-    },
-    text: {
-        fontSize: 30
-    },
     scoreContainer: {
         flexDirection: "row",
         width: "90%",
-        justifyContent: "space-around"
+        justifyContent: "space-around",
+        marginBottom: 20,
+        gap: 20
     },
-    backButton: {
+    finishButton: {
+        backgroundColor: "#61BCFA",
+        borderRadius: 20,
+        position: "absolute",
+        bottom: 0,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: 50,
+        width: 200,
+        margin: 5
+    },
+    text: {
+        fontSize: 20
+    },
+    scoreButtonContainer: {
+        flexDirection: "row",
 
-        left: 5,
-        top: "50%",
-        transform: [{ translateY: -35 }]
     }
 })

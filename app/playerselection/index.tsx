@@ -9,7 +9,7 @@ import * as SecureStore from "expo-secure-store"
 import { styles } from './styles'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '../../store/authStore'
-import { getAllUserFriends } from '../../services/userService'
+import { getAllUserFriends, getLocalUserFriends } from '../../services/userService'
 
 
 
@@ -23,6 +23,7 @@ const PlayerSelectionPage = () => {
     const router = useRouter()
     useEffect(() => {
         if (user) {
+            getLocalUserFriends().then(data => setFriends(prev => [...prev, ...data]))
             getAllUserFriends(user.id).then(data => setFriends(data))
         }
     }, [])
@@ -61,7 +62,7 @@ const PlayerSelectionPage = () => {
                     <TouchableOpacity style={styles.button} onPress={() => setAddingFriend(prev => !prev)}>
                         <Text style={styles.text}>Lisää uusi pelaaja</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={selectedFriends.length > 0 ? styles.button : styles.notReadyButton} disabled={selectedFriends.length === 0}
+                    <TouchableOpacity style={selectedFriends.length > 0 ? styles.button : styles.notReadyButton}
                         onPress={() => startRoundHandler()}>
                         <Text style={styles.text}>Aloita kierros</Text>
                     </TouchableOpacity>

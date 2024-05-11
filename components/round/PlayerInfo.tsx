@@ -1,25 +1,22 @@
 import { FC, useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { useRoundStore } from '../../store/roundStore'
-import { ScoreButton } from '../../components/round/ScoreButton'
-import Scoreboard from '../../components/round/Scoreboard'
-import FairwayInfo from '../../components/round/FairwayInfo'
+import { AntDesign } from '@expo/vector-icons';
 import { Hole, RoundPlayer } from '../../lib/types'
 interface PlayerInfoProps {
     player: string
     players: RoundPlayer[]
-    holes: Hole[]
     playerScore: number
-    par: number
     displayedPlayer: number
     holeNumber: number
+    lastScore: boolean
     setDisplayedPlayer: React.Dispatch<React.SetStateAction<number>>
     setHoleNumber: React.Dispatch<React.SetStateAction<number>>
+    setDisplayScoreboard: React.Dispatch<React.SetStateAction<boolean>>
 
 }
 
-const PlayerInfo: FC<PlayerInfoProps> = ({ player, players, holes, playerScore, par, displayedPlayer,
-    holeNumber, setDisplayedPlayer, setHoleNumber }) => {
+const PlayerInfo: FC<PlayerInfoProps> = ({ player, players, playerScore, displayedPlayer,
+    holeNumber, setDisplayedPlayer, setHoleNumber, lastScore }) => {
 
     const handleBackPress = () => {
         if (displayedPlayer === 0) {
@@ -43,15 +40,22 @@ const PlayerInfo: FC<PlayerInfoProps> = ({ player, players, holes, playerScore, 
         <>
             <View>
                 <Text style={styles.text}>{player}</Text>
-                <Text style={styles.text}>{playerScore > par && "+"}{playerScore && (playerScore - par) + ""}</Text>
-                {(holeNumber > 0 || displayedPlayer > 0) &&
-                    <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-                        <Text>Takaisin</Text>
-                    </TouchableOpacity>}
-                {(holeNumber !== holes.length && displayedPlayer !== players.length) &&
-                    <TouchableOpacity style={styles.backButton} onPress={handleNextPress}>
-                        <Text>Seuraava</Text>
-                    </TouchableOpacity>}
+                <Text style={styles.text}>{playerScore && (playerScore > 0 ? `+${playerScore}` : playerScore) + ""}</Text>
+                <View style={styles.navigateButtons}>
+                    {(holeNumber > 0 || displayedPlayer > 0) ?
+                        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+                            <Text><AntDesign name="leftcircleo" size={30} color="green" /></Text>
+                        </TouchableOpacity>
+                        : <TouchableOpacity disabled style={styles.backButton} onPress={handleBackPress}>
+                            <Text><AntDesign name="leftcircleo" size={30} color="grey" /></Text>
+                        </TouchableOpacity>}
+                    {lastScore ? <TouchableOpacity style={styles.backButton} disabled>
+                        <Text><AntDesign name="rightcircleo" size={30} color="grey" /></Text>
+                    </TouchableOpacity> :
+                        <TouchableOpacity style={styles.backButton} onPress={handleNextPress}>
+                            <Text><AntDesign name="rightcircleo" size={30} color="green" /></Text>
+                        </TouchableOpacity>}
+                </View>
             </View>
         </>
     )
@@ -73,7 +77,14 @@ const styles = StyleSheet.create({
         gap: 5
     },
     text: {
-        fontSize: 30
+        fontSize: 30,
+        textAlign: "center"
+    },
+    navigateButtons: {
+        display: "flex",
+        flexDirection: "row",
+        width: "50%",
+        justifyContent: "space-between"
     },
     scoreContainer: {
         flexDirection: "row",
@@ -82,9 +93,7 @@ const styles = StyleSheet.create({
     },
     backButton: {
 
-        left: 5,
-        top: "50%",
-        transform: [{ translateY: -35 }]
+
     }
 })
 

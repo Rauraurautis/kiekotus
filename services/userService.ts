@@ -1,4 +1,4 @@
-import { NonregisteredFriend, RegisterUserCredentials, UserCredentials } from "../lib/types";
+import { Friend, NonregisteredFriend, RegisterUserCredentials, Round, UserCredentials } from "../lib/types";
 import { nonRegisteredFriendSchemaType } from "../lib/zod/schema";
 import instance from "./axiosInstance";
 import * as SecureStore from "expo-secure-store"
@@ -63,23 +63,41 @@ export const getUserRounds = async (userId: string) => {
     }
 }
 
+export const addUserRound = async (userId: string, round: Round) => {
+    try {
+        const response = await instance.post(`/api/users/${userId}/rounds`, round)
+        const data = await response.data
+        return data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const addPlayedRound = async (userId: string, courseId: number) => {
+    try {
+        const response = await instance.post(`/api/users/${userId}/statistics/played-courses`, { courseId, date: new Date().toISOString() })
+        const data = await response.data
+        return data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const getLocalUserFriends = async (): Promise<Friend[]> => {
+    const localFriends = await SecureStore.getItemAsync("friends")
+    if (localFriends) {
+        const parsedFriends = JSON.parse(localFriends)
+        return [...parsedFriends]
+    }
+    return []
+}
+
 export const getAllUserFriends = async (userId: string) => {
     try {
         const resFriends = await instance.get(`/api/users/${userId}/friendships`)
         const friends = await resFriends.data
-        const localFriends = await SecureStore.getItemAsync("friends")
-        if (localFriends) {
-            const parsedFriends = JSON.parse(localFriends)
-            console.log([...friends, ...parsedFriends])
-            return [...friends, ...parsedFriends]
-        }
         return friends
     } catch (error) {
         console.error(error)
-        const localFriends = await SecureStore.getItemAsync("friends")
-        if (localFriends) {
-            const parsedFriends = JSON.parse(localFriends)
-            return parsedFriends
-        }
     }
 }

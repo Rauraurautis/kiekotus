@@ -1,15 +1,15 @@
 import { FC } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
-interface FairwayInfoProps {
+interface HoleInfoProps {
     holeNumber: number
     par: number
     distance: number
 }
 
-const FairwayInfo: FC<FairwayInfoProps> = ({ holeNumber, par, distance }) => {
+const HoleInfo: FC<HoleInfoProps> = ({ holeNumber, par, distance }) => {
     return (
-        <View style={styles.fairwayInfo}>
+        <View style={styles.holeInfo}>
             <Text style={styles.text}>Väylä {holeNumber + 1}</Text>
             <Text style={styles.text}>Par {par}</Text>
             <Text style={styles.text}>{distance > 0 && `${distance}m`}</Text>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         gap: 5,
     },
-    fairwayInfo: {
+    holeInfo: {
         alignItems: "center",
         gap: 5
     },
@@ -48,4 +48,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default FairwayInfo
+export default HoleInfo

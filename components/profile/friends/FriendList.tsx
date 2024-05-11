@@ -5,8 +5,9 @@ import { StatusBar } from 'expo-status-bar'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import { getUserFriends } from '../../../services/userService'
 import Toast from 'react-native-toast-message'
-import DeleteDialog from './deleteDialog'
-import ApproveDialog from './approveDialog'
+import DeleteDialog from './DeleteDialog'
+import ApproveDialog from './ApproveDialog'
+
 
 interface FriendListProps {
     user: User | null

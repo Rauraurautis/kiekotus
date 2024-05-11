@@ -50,6 +50,7 @@ export type Course = {
 
 export type CustomCourse = {
     name: string
+    id: number
     holes: Hole[]
 }
 
@@ -65,6 +66,16 @@ export type RoundInfo = {
     course: Course | CustomCourse
 }
 
+export type Round = {
+    courseId: number,
+    courseName: string,
+    roundPlayers: { name: string, score: number }[]
+}
+
+export type PlayedRound = {
+    courseId: number,
+    date: string
+}
 
 
 

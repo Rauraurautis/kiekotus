@@ -1,8 +1,7 @@
 
 import { FC, useCallback, useEffect, useState } from "react"
-import { Button, StyleSheet, Text, TextInput, View } from "react-native"
+import { Button, StyleSheet, Text, TextInput, View, TouchableOpacity } from "react-native"
 import { useForm, Controller, FieldValues } from 'react-hook-form';
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../../store/authStore";
 import { loginToServer } from "../../services/userService";
