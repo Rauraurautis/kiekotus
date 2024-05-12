@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import RegisterForm from '../../components/user/RegisterForm'
 import { useRouter } from 'expo-router'
 import { AntDesign } from '@expo/vector-icons';
+import BackButton from '../../components/ui/BackButton';
 
 interface RegistrationProps {
 
@@ -13,9 +14,7 @@ const Registration: FC<RegistrationProps> = ({ }) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.push("/login")}>
-                <AntDesign name="back" size={24} color="black" />
-            </TouchableOpacity>
+            <BackButton onPress={() => router.push("/login")}/>
             <View style={styles.header} >
                 <Text style={styles.mainText}>Rekisteröidy</Text>
                 <View style={styles.line} />

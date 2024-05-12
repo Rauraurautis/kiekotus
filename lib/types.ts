@@ -69,12 +69,23 @@ export type RoundInfo = {
 export type Round = {
     courseId: number,
     courseName: string,
-    roundPlayers: { name: string, score: number }[]
+    roundPlayers: { name: string, scores: number[] }[]
 }
 
 export type PlayedRound = {
     courseId: number,
     date: string
+}
+
+export type ImportedCourseData = {
+    id: number
+    courseId: number
+    userId: number
+    roundPlayers: string
+    createdAt: string
+    course: {
+        name: string
+    }
 }
 
 

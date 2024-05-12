@@ -33,7 +33,7 @@ const SaveRoundDialog: FC<SaveRoundDialogProps> = ({ roundInfo }) => {
         if (user) {
             try {
                 const roundPlayers = roundInfo.players.map(p =>
-                    ({ name: p.player.name, score: p.scores.reduce((a, b) => a + b, 0) }))
+                    ({ name: p.player.name, scores: p.scores }))
                 const roundData: Round = { courseId: roundInfo.course.id ?? 0, courseName: roundInfo.course.name, roundPlayers }
                 await addUserRound(user?.id, roundData)
                 await submitData()

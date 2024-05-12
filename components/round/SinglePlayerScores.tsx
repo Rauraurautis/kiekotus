@@ -17,6 +17,8 @@ interface SinglePlayerScoresProps {
 
 const SinglePlayerScores: FC<SinglePlayerScoresProps> = ({ selectedPlayer, setSelectedPlayer }) => {
 
+    const result = selectedPlayer?.scores.reduce((a, b) => a + b, 0)
+
     return (
         <View style={styles.scoreboardContainer}>
             <BackButton onPress={() => setSelectedPlayer(null)} />
@@ -27,13 +29,13 @@ const SinglePlayerScores: FC<SinglePlayerScoresProps> = ({ selectedPlayer, setSe
                     renderItem={({ item, index }) =>
                         <View style={styles.scoreCard}>
                             <Text style={styles.text}>Väylä {index + 1}</Text>
-                            <Text style={styles.text}>{item}</Text>
+                            <Text style={styles.text}>{item > 0 && "+"}{item}</Text>
                         </View>}
-                    keyExtractor={item => item + ""}
+                    keyExtractor={item => (item + Math.floor(Math.random() * 1000)) + ""}
                     style={styles.playerList}
                 />
             </View>
-            <Text style={styles.text}>Kokonaistulos {selectedPlayer?.scores.reduce((a, b) => a + b, 0)}</Text>
+            <Text style={styles.text}>Kokonaistulos {result! > 0 ? `+${result}` : result}</Text>
         </View>
     )
 }
@@ -73,7 +75,7 @@ export const styles = StyleSheet.create({
         padding: 10
     },
     scoreCard: {
-        height: 60,
+        padding: 5,
         backgroundColor: "#b7dafc",
         flexDirection: "row",
         justifyContent: "space-around",

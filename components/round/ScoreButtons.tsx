@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: "90%",
         justifyContent: "space-around",
-        marginBottom: 20,
+        marginBottom: 40,
         gap: 20
     },
     finishButton: {

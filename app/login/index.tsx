@@ -4,6 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useForm, Controller, FieldValues } from 'react-hook-form';
 import { useRouter } from "expo-router";
 import LoginForm from "../../components/user/LoginForm";
+import BackButton from "../../components/ui/BackButton";
 
 interface LoginFormProps {
 
@@ -14,9 +15,7 @@ const LoginPage = ({ }) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.push("/")}>
-                <AntDesign name="back" size={24} color="black" />
-            </TouchableOpacity>
+            <BackButton onPress={() => router.push("/")}/>
             <View style={styles.header}>
                 <Text style={styles.mainText}>Kirjaudu sisään</Text>
                 <View style={styles.line} />

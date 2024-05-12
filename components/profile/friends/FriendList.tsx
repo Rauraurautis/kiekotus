@@ -29,49 +29,53 @@ const FriendList: FC<FriendListProps> = ({ user, setShowFriends }) => {
         }
     }, [])
 
+    const handleDeleteClick = (friend: Friend) => {
+        setSelectedFriend(friend)
+        setShowDelete(true)
+    }
+
     return (
-        <View style={styles.container}>
+        <View style={styles.friendInfoContainer}>
             <StatusBar style='light' backgroundColor='black' />
             <BackButton onPress={() => setShowFriends(false)} />
-            <View style={styles.friendInfoContainer}>
-                {showDelete && <DeleteDialog friend={selectedFriend} />}
-                {showApprove && <ApproveDialog friend={selectedFriend} />}
-                <View>
-                    <Text>Kaverilista</Text>
+            {showDelete && <DeleteDialog friend={selectedFriend} />}
+            {showApprove && <ApproveDialog friend={selectedFriend} />}
+            <View style={styles.header}>
+                <Text style={styles.title}>Kaverilista</Text>
+                <View style={styles.line}></View>
+            </View>
+            <View>
+                <View style={styles.subheader}>
+                    <Text style={styles.subtitle}>Kaveripyynnöt</Text>
                     <View style={styles.line}></View>
                 </View>
                 <View>
-                    <View>
-                        <Text>Kaveripyynnöt</Text>
-                        <View style={styles.line}></View>
-                    </View>
-                    <View>
-                        <FlatList />
-                    </View>
-                </View>
-                <View>
-                    <View>
-                        <Text>Kaverilista</Text>
-                        <View style={styles.line}></View>
-                    </View>
-                    <View>
-                        <FlatList data={friends} renderItem={({ item }) =>
-                            <TouchableOpacity style={styles.friend} onPress={() => setSelectedFriend(item)}>
-                                {item.name}
-                            </TouchableOpacity>}
-                            keyExtractor={(item) => item.id + ""} />
-                    </View>
+
                 </View>
             </View>
-
-
+            <View>
+                <View style={styles.subheader}>
+                    <Text style={styles.subtitle}>Kaverilista</Text>
+                    <View style={styles.line}></View>
+                </View>
+                <View>
+                    <FlatList data={friends} renderItem={({ item }) =>
+                        <TouchableOpacity style={styles.friend} onPress={() => handleDeleteClick(item)}>
+                            {item.name}
+                        </TouchableOpacity>}
+                        keyExtractor={(item) => item.id + ""} />
+                </View>
+            </View>
         </View>
+
+
+
     )
 }
 
 export const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 0.8,
         width: "100%",
         alignItems: 'center',
         paddingTop: 80,
@@ -79,14 +83,24 @@ export const styles = StyleSheet.create({
 
     },
     friendInfoContainer: {
-        width: "90%",
-        flex: 0.2,
-        backgroundColor: "white"
+        width: "80%",
+        flex: 0.8,
+        backgroundColor: "white",
+        justifyContent: "space-around"
+    },
+    header: {
+        position: "absolute",
+        top: 25,
+        width: "100%",
+        alignItems: "center"
+    },
+    subheader: {
+        alignItems: "center"
     },
     line: {
-        width: "100%",
-        height: 2,
-        backgroundColor: "black"
+        height: 1,
+        backgroundColor: "black",
+        width: "90%"
     },
     friend: {
         display: "flex",
@@ -95,6 +109,15 @@ export const styles = StyleSheet.create({
         height: 50,
         width: "100%",
         backgroundColor: "green"
+    },
+    text: {
+        fontSize: 18
+    },
+    title: {
+        fontSize: 25
+    },
+    subtitle: {
+        fontSize: 23
     }
 })
 

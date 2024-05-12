@@ -25,22 +25,31 @@ const Profile: FC<ProfileProps> = ({ }) => {
 
     }, [])
 
+    if (showFriends) {
+        return <FriendList user={user} setShowFriends={setShowFriends} />
+    }
+
+    if (showRounds) {
+        return <PlayedRounds user={user} setShowRounds={setShowRounds} />
+    }
 
     return (
         <View style={styles.container}>
             <StatusBar style='light' backgroundColor='black' />
-            {showFriends && <FriendList user={user} setShowFriends={setShowFriends} />}
-            {showRounds && <PlayedRounds user={user} setShowRounds={setShowRounds} />}
             <BackButton onPress={() => router.push("/")} />
-            <View style={styles.userInfoContainer}>
-                <Text>{user?.user}</Text>
-                <Text>{user?.email}</Text>
+            <View style={styles.header}>
+                <Text style={styles.title}>Profiili</Text>
+                <View style={styles.line} />
             </View>
-            <TouchableOpacity>
-                <Text>Kaverilista</Text>
+            <View style={styles.userInfoContainer}>
+                <Text style={styles.text}>{user?.user}</Text>
+                <Text style={styles.text}>{user?.email}</Text>
+            </View>
+            <TouchableOpacity style={styles.button} onPress={() => setShowFriends(true)}>
+                <Text style={styles.buttonText}>Kaverilista</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
-                <Text>Pelatut kierrokset</Text>
+            <TouchableOpacity style={styles.button} onPress={() => setShowRounds(true)}>
+                <Text style={styles.buttonText}>Pelatut kierrokset</Text>
             </TouchableOpacity>
 
         </View>
@@ -52,21 +61,52 @@ export default Profile
 
 export const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        width: "100%",
+        flex: 0.4,
+        width: "75%",
         alignItems: 'center',
         paddingTop: 80,
         paddingBottom: 50,
+        backgroundColor: "white"
 
+    },
+    header: {
+        position: "absolute",
+        top: 25,
+        width: "100%",
+        alignItems: "center"
     },
     userInfoContainer: {
         width: "90%",
-        flex: 0.2,
-        backgroundColor: "white"
+        height: 100,
+        alignItems: "center",
+        justifyContent: "space-around",
+        backgroundColor: "#eae9ff"
     },
     userFriendsContainer: {
         width: "90%",
         flex: 0.2,
         backgroundColor: "white"
+    },
+    line: {
+        height: 1,
+        backgroundColor: "black",
+        width: "90%"
+    },
+    text: {
+        fontSize: 18
+    },
+    title: {
+        fontSize: 25
+    },
+    button: {
+        backgroundColor: "#2E4153",
+        paddingVertical: 20,
+        width: "90%",
+        marginTop: 15,
+        alignItems: "center"
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 25
     }
 })
